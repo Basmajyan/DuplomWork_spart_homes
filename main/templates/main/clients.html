@@ -1,0 +1,29 @@
+{%extends 'main/dashboardLayout.html'%}
+{%load static%}
+
+{%block portal%}
+<a >Клиенты</a>
+{%endblock%}                    
+
+{%block content%}
+<div class="lastClients">
+    <h3>Зарегистрированные Клиенты за последний день и за сегодня</h3>
+    <table >
+        <tr>
+            <th>Клиент</th>
+            <th>Логин</th>
+            <th>Адрес</th>
+            <th>Дата регистрации</th>
+        </tr>
+        {%for i in users%}
+        <tr>
+            <td>{{i.first_name}} {{i.last_name}}</td>
+            <td>{{i.username}}</td>
+            <td>{{i.email}}</td>
+            <td>{{i.date_joined}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+</div>
+
+{%endblock%}

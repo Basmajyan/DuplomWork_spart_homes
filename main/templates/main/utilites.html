@@ -1,0 +1,99 @@
+{%extends 'main/dashboardLayout.html'%}
+{%load static%}
+
+
+{%block portal%}
+<a >Ком-услуги </a>
+{%endblock%}                    
+
+{%block content%}
+{% if user.is_superuser %}
+<div class="lastClients">
+    <h3>Последние квитанции Ком-услуг для клиентов</h3>
+    <table>
+        <tr>
+            <th>Клиент</th>
+            <th>Адрес</th>
+            <th>Дата создание квитанции</th>
+            <th>Месяц</th>
+        </tr>
+        {%if comunalsList%}
+            {%for i in comunalsList%}
+                <tr>
+                    <td>{{i.first_name}} {{i.last_name}}</td>
+                    <td>{{i.adress}}</td>
+                    <td>{{i.date}}</td>
+                    <td>{{i.mounth}}</td>
+                </tr>
+            {%endfor%}
+        {%endif%}
+        
+    </table>
+</div>
+<div class="lastClients">
+    <h3>Создание квитанции Ком-услуг для клиентов</h3>
+    <table>
+        <tr>
+            <th>Клиент</th>
+            <th>Мецяц</th>
+            <th>Создать</th>
+        </tr>
+        <tr>
+            <td>
+                <select id='select'>
+                    <option class="option" >Выберите пользователья</option>                    
+                    {%for i in users%}
+                    <option id='user_{{i.id}}'>{{i.first_name}} {{i.last_name}}</option>                    
+                    {%endfor%}
+                </select>
+            </td>
+            <td id="silutionTD"><input id="mounth" placeholder="Вводите месяц" type="text"></td>
+            <td><button class="createUtilit" id="run">Создать</button></td>
+            </tr>
+        
+    </table>
+</div>
+{%else%}
+<div class="lastClients">
+    <h3>Последние квитанции</h3>
+    <table>
+        <tr>
+            <th>Клиент</th>
+            <th>Адрес</th>
+            <th>Дата создание квитанции</th>
+            <th>Месяц</th>
+        </tr>
+        {%if MYcomunalsList%}
+            {%for i in MYcomunalsList%}
+                <tr>
+                    <td>{{i.first_name}} {{i.last_name}}</td>
+                    <td>{{i.adress}}</td>
+                    <td>{{i.date}}</td>
+                    <td>{{i.mounth}}</td>
+                </tr>
+            {%endfor%}
+        {%endif%}
+        
+    </table>
+</div>
+{%endif%}
+<script>
+    $('.createUtilit').on('click', function () {
+        mounth = document.getElementById('mounth').value
+        if (mounth){
+            elect = document.getElementById('select')
+            selectValue = select.options[select.selectedIndex]   
+            userID = selectValue.id.split('_')[1]
+            $.ajax({
+                type: 'GET',
+                data: {
+                    mounth:mounth,
+                    userID:userID,
+                }
+            })    
+            location.reload(true)
+        }
+    })
+</script>
+
+{%endblock%}

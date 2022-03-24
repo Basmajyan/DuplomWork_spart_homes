@@ -1,0 +1,118 @@
+{%extends 'main/dashboardLayout.html'%}
+{%load static%}
+
+{%block portal%}
+<a>Решение для УД</a>
+{%endblock%}                    
+
+{%block content%}
+{% if user.is_superuser %}
+    <div class="lastClients">
+        <h3>Созданные Решении для УД</h3>
+        <table id="table" >
+            <tr>
+                <th>Решение для УД</th>
+                <th>Действии</th>
+                <th>Дата создание</th>
+            </tr>
+            {%if solutions%}
+                {%for i in solutions%}
+                    <tr>
+                        <td>{{i.solution}}</td>
+                        <td>{{i.action}}</td>
+                        <td>{{i.date}}</td>
+                    </tr>
+                {% endfor %}
+            {%endif%}
+        </table>
+    </div>
+    <div class="lastClients">
+        <h3>Созданные Решении для УД</h3>
+        <table>
+            <tr>
+                <th>Решение для УД</th>
+                <th>Действии</th>
+                <th>Создать Решение</th>
+            </tr>
+            
+            <tr>
+                <td><input id="solution" placeholder="Вводите решение" type="text"> </td>
+                <td><input id="action" placeholder="Вводите действие" type="text"> </td>
+                <td><button class="setSolution">Создать</button></td>
+            </tr>
+            
+        </table>
+    </div>
+{%else%}
+<div class="lastClients">
+    <h3>Все доступные Решении для УД</h3>
+    <table id="table" >
+        <tr>
+            <th>Решение для УД</th>
+            <th>Действии</th>
+            <th>Дата создание</th>
+            <th>Запрос для подключение</th>
+            <th>Статус</th>
+        </tr>
+        {%if solutions%}
+            {%for i in solutions%}
+                <tr>
+                    <td>{{i.solution}}</td>
+                    <td>{{i.action}}</td>
+                    <td>{{i.date}}</td>
+                    <td><button class="setConnectHome" id="home_{{i.id}}">Запросить</button></td>
+                    {%if i.status == 'none'%}
+                        <td id="homeTD_{{i.id}}"> нет </td>
+                    {%elif i.status == 'treatment'%}
+                        <td id="homeTD_{{i.id}}">В отроботке</td>
+                    {%elif i.status == 'connected'%}
+                        <td id="homeTD_{{i.id}}">Подключено</td>
+                    {%endif%}
+
+                </tr>
+            {% endfor %}
+        {%endif%}
+    </table>
+</div>
+{%endif%}
+
+<script>
+    $('.setConnectHome').on('click', function () {
+        homeID = this.id.split('_')[1]
+        console.log(homeID)
+        document.getElementById('homeTD_'+homeID).innerHTML = 'В отроботке'
+
+        
+        $.ajax({
+            type: 'GET',
+            data: {
+                homeID:homeID,
+            }
+        })    
+    })
+    $('.setSolution').on('click', function () {
+        solution = document.getElementById('solution').value
+        action = document.getElementById('action').value
+        
+        if (solution && action){
+            ostatok = document.getElementById('table').innerHTML
+            ostatok = ostatok.replace(/\n|\r/g, "")
+            ostatok = ostatok.replace(/\s/g, '')
+            ostatok = ostatok.replace('<tbody><tr><th>РешениедляУД</th><th>Действии</th><th>Датасоздание</th></tr>', '')            
+            document.getElementById('table').innerHTML = '<tbody><tr><th>Решение для УД</th><th>Действии</th><th>Дата создание</th></tr>'+ '<tr><td>'+solution+'</td><td>'+action+'</td><td>'+'{{now}}'+'</td></tr>'+ostatok
+            document.getElementById('solution').value = ''
+            document.getElementById('action').value = ''
+            $.ajax({
+                type: 'GET',
+                data: {
+                    solution:solution,
+                    action:action,                
+                }
+            })
+        }
+    })
+    
+    
+</script>
+
+{%endblock%}

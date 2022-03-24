@@ -1,0 +1,149 @@
+{%extends 'main/dashboardLayout.html'%}
+{%load static%}
+
+{%block portal%}
+<a >Dashboard</a>
+{%endblock%}                    
+
+{%block content%}
+{% if user.is_superuser %}
+
+    <div class="summaryDiv">
+        <div class="summary">
+        <p>
+            <span>{{userCount}}</span><br>
+            Клиентов
+        </p>
+        <img src="{%static 'img/contact.png'%}" alt="">
+        </div>
+        <div class="summary">
+        <p>
+            <span>{{solutionCount}}</span><br>
+            Решении УД
+        </p>
+        <img src="{%static 'img/lamp.png'%}" alt="">
+        </div>
+        <div class="summary">
+        <p>
+            <span>{{connectCount}}</span><br>
+            Подключенных домов
+        </p>
+        <img src="{%static 'img/home.png'%}" alt="">
+        </div>
+    </div>
+{%endif%}
+
+{%if lastusers%}
+    <div class="lastClients">
+        <h3>Зарегистрированные Клиенты за последний день и за сегодня</h3>
+        <table >
+            <tr>
+                <th>Клиент</th>
+                <th>Логин</th>
+                <th>Адрес</th>
+                <th>Дата регистрации</th>
+            </tr>
+            {%for i in lastusers%}
+            <tr>
+                <td>{{i.first_name}} {{i.last_name}}</td>
+                <td>{{i.username}}</td>
+                <td>{{i.email}}</td>
+                <td>{{i.date_joined}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+{%else%}
+
+    <div class="lastClients">
+        <h3>Мои данные при регистрации</h3>
+        <table >
+            <tr>
+                <th>Клиент</th>
+                <th>Логин</th>
+                <th>Адрес</th>
+                <th>Дата регистрации</th>
+            </tr>
+
+            <tr>
+                <td>{{request.user.first_name}} {{request.user.last_name}}</td>
+                <td>{{request.user.username}}</td>
+                <td>{{request.user.email}}</td>
+                <td>{{request.user.date_joined}}</td>
+            </tr>
+
+        </table>
+    </div>
+{%endif%}
+{% if user.is_superuser %}
+
+    <div class="lastClients">
+        <h3>Последние действие клиентов за последний и за сегодня</h3>
+        <table >
+            <tr>
+                <th>Клиент</th>
+                <th>Адрес</th>
+                <th>Действие</th>
+                <th>Дата и время</th>
+            </tr>
+            {%if actionsDictonary%}
+                {%for i in actionsDictonary%}
+                <tr>
+                    <td>{{i.first_name}} {{i.last_name}}</td>
+                    <td>{{i.adress}}</td>
+                    <td>{{i.action}}</td>
+                    <td>{{i.date}}</td>
+                </tr>
+                {%endfor%}
+            {%endif%}
+        </table>
+    </div>
+
+    <div class="lastClients">
+        <h3>Запросы клиентов для подключение Решении для УД</h3>
+        <table >
+            <tr>
+                <th>Клиент</th>
+                <th>Адрес дома</th>
+                <th>Решение для УД</th>
+                <th>Действии</th>
+                <th>Дата</th>
+            </tr>
+            {%if solutionList%}
+            {%for i in solutionList%}
+                <tr id="tr_{{i.id}}">
+                    <td>{{i.first_name}} {{i.last_name}}</td>
+                    <td>{{i.adress}}</td>
+                    <td>{{i.solution}}</td>
+                    <td>{{i.action}}</td>
+                    <td>{{i.date}}</td>
+                </tr>
+            {% endfor %}
+        {%endif%}
+        </table>
+    </div>
+
+{%else%}
+<div class="lastClients">
+    <h3>Подключенные Решении для УД</h3>
+    <table >
+        <tr>
+            <th>Клиент</th>
+            <th>Адрес</th>
+            <th>Решение для УД</th>
+            <th>Дата и время</th>
+        </tr>
+        {%if connectedSoltions%}
+            {%for i in connectedSoltions%}
+                <tr>
+                    <td>{{i.first_name}} {{i.last_name}}</td>
+                    <td>{{i.adress}}</td>
+                    <td>{{i.solution}}</td>
+                    <td>{{i.date}}</td>
+                </tr>
+            {%endfor%}
+        {%endif%}
+    </table>
+</div>
+{%endif%}
+{%endblock%}

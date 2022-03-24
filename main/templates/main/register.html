@@ -1,0 +1,66 @@
+{%extends 'main/layout.html'%}
+{%load static%}
+
+{%block title%}<title>Регистрация</title>{%endblock%}
+
+
+{%block content%}
+
+<div class="authorizationDiv">
+    <h3>Регистрация</h3>
+    <input id="username" type="text" placeholder="Введите логин">
+    <input id="last_name" type="text" placeholder="Введите имя">
+    <input id="first_name" type="text" placeholder="Введите фамилию">
+    <input id="adress" type="text" placeholder="Введите адрес">
+    <input id="password1" type="password" placeholder="Введите пароль">
+    <input id="password2" type="password" placeholder="Повторите пароль">
+    <button class="submitButton">Регистрироватся</button>
+    <p id="errorText"></p>
+</div>
+<script>
+    $('.submitButton').on('click', function () {
+        error = document.getElementById('errorText')
+        username = document.getElementById('username').value
+        last_name = document.getElementById('last_name').value
+        first_name = document.getElementById('first_name').value
+        adress = document.getElementById('adress').value
+        password1 = document.getElementById('password1').value
+        password2 = document.getElementById('password2').value
+
+        if(username && last_name && first_name && adress && password1 && password2){
+            if (password1.length >= 6 ){
+                if (password1 === password2){
+                    $.ajax({
+                        type: 'GET',
+                        data: {
+                            username:username,
+                            last_name:last_name,
+                            first_name:first_name,
+                            adress:adress,  
+                            password1:password1,  
+
+                        },
+                        success: function (errorMessage) {
+                            if(errorMessage.errorMessage == 'userIsReg'){
+                                error.innerHTML = "Пользоватеь с таким логином уже существует"                               
+                            }                                                
+                            if(errorMessage.errorMessage == 'login'){
+                                location.href = '/'
+                            }                                                
+                        }      
+                    })
+                }else{
+                    error.innerHTML = "Пароли не совпадают"
+                }
+            }else{
+                error.innerHTML = "Пароль не может содержат менее 6 симоволов"
+            }
+        }else{
+            error.innerHTML = "Заполните все поля"
+        }
+
+    })
+</script>
+<div style="height:250px"></div>
+
+{%endblock%}

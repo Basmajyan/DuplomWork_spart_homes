@@ -1,0 +1,57 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{%static 'css/style.css'%}">
+    <title>Личный кабинет</title>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dashManu">
+            <h2>
+                {% if user.is_superuser %}
+                    Личный Кабинет Администратора
+                {%else%}
+                    Личный Кабинет<br> Клиента
+                {%endif%}
+                
+            </h2>
+            <span>
+                {% if request.user.first_name and request.user.last_name%}
+                    {{request.user.first_name}} {{request.user.last_name}}                    
+                {%else%}
+                    {{request.user.username}}                
+                {%endif%}
+            </span>
+            <div>
+                <a href="dashboard">Dashboard</a>
+                <a href="solution">Решении для УД</a>
+                {% if user.is_superuser %}
+                    <a href="clients">Клиенты</a>
+                {%endif%}
+                <a href="connects">Подключенные Дома</a>
+                <a href="utilites">Ком-услуги</a>
+            </div>
+        </div>
+        <div class="dashContent">
+            <div class="dashHeader">
+                {%block portal%}
+                {%endblock%}                    
+                <a href="/">Вийти</a>
+            </div>
+            {%block content%}
+                
+
+            {%endblock%}
+        </div>
+    </div>
+</body>
+</html>

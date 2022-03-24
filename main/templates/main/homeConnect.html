@@ -1,0 +1,137 @@
+{%extends 'main/dashboardLayout.html'%}
+{%load static%}
+
+{%block portal%}
+<a >Подключенные Дома</a>
+{%endblock%}                    
+
+{%block content%}
+{% if user.is_superuser %}
+    
+    <div class="lastClients">
+        <h3>Подключенные дома к Решением для УД</h3>
+        <table id="zamena">
+            <tr>
+                <th>Клиент</th>
+                <th>Адрес дома</th>
+                <th>Решение для УД</th>
+                <th>Действии</th>
+                <th>Дата</th>
+            </tr>
+            {%if connectedSoltions%}
+                {%for i in connectedSoltions%}
+                    <tr>
+                        <td>{{i.first_name}} {{i.last_name}}</td>
+                        <td>{{i.adress}}</td>
+                        <td>{{i.solution}}</td>
+                        <td>{{i.action}}</td>
+                        <td>{{i.date}}</td>
+                    </tr>
+                {%endfor%}
+            {%endif%}
+            
+        </table>
+    </div>
+    <div class="lastClients">
+        <h3>Запросы клиентов для подключение Решении для УД</h3>
+        <table id="table" >
+            <tr>
+                <th>Клиент</th>
+                <th>Адрес дома</th>
+                <th>Решение для УД</th>
+                <th>Действии</th>
+                <th>Дата</th>
+                <th>Подключение</th>
+            </tr>
+            {%if solutionList%}
+                {%for i in solutionList%}
+                    <tr id="tr_{{i.id}}">
+                        <td>{{i.first_name}} {{i.last_name}}</td>
+                        <td>{{i.adress}}</td>
+                        <td>{{i.solution}}</td>
+                        <td>{{i.action}}</td>
+                        <td>{{i.date}}</td>
+                        <td><button class="setConnectHome" id="home_{{i.id}}">Подключить</button></td>
+
+                    </tr>
+                {% endfor %}
+            {%endif%}
+        </table>
+    </div>
+{%else%}
+<div class="lastClients">
+    <h3>Подключенные Решении</h3>
+    <table>
+        <tr>
+            <th>Решение для УД</th>
+            <th>Действии</th>
+            <th>Выполнить</th>
+        </tr>
+        <tr>
+            <td id="silutionTD"></td>
+            <td>
+                <select id='select'>
+                    <option class="option" >Выберите действие</option>                    
+                {%for i in selectActionsList%}
+                    <option class="option" name="{{i.solution}}" id='option_{{i.id}}'>{{i.action}}</option>                    
+                    {%endfor%}
+                </select>
+            </td>
+            <td><button class="runSolution" id="run">Выполнить</button></td>
+            </tr>
+        
+    </table>
+</div>
+{%endif%}
+<script>
+    $('#select').on('change', function () {
+        select = document.getElementById('select')
+        selectValue = select.options[select.selectedIndex]
+        solution = selectValue.getAttribute("name")
+        
+        document.getElementById('silutionTD').innerHTML = solution
+
+    })
+    $('.runSolution').on('click', function () {
+        select = document.getElementById('select')
+        selectValue = select.options[select.selectedIndex]
+        if (selectValue.value != 'Выберите действие'){
+            id= selectValue.id.split('_')[1]
+            document.getElementById('silutionTD').innerHTML = ''
+            document.getElementById('select').value = 'Выберите действие'
+            
+            $.ajax({
+                type: 'GET',
+                data: {
+                    runAction:id,
+                }
+            })    
+        }
+    })
+    $('.setConnectHome').on('click', function () {
+        homeID = this.id.split('_')[1]
+        ostatok = document.getElementById('tr_'+homeID).innerHTML
+        ostatok = ostatok.replace(/\n|\r/g, "")
+        ostatok = ostatok.replace(/\s/g, '')
+        ostatok = ostatok.replace('<td><buttonclass="setConnectHome"id="home_'+homeID+'">Подключить</button></td>', '')
+        zamena = document.getElementById('zamena').innerHTML
+        zamena = zamena.replace(/\n|\r/g, "")
+        zamena = zamena.replace(/\s/g, '')
+        zamena = zamena.replace('<tbody>', '')
+        zamena = zamena.replace('</tbody>', '')
+        zamena = zamena.replace('<tr><th>Клиент</th><th>Адресдома</th><th>РешениедляУД</th><th>Действии</th><th>Дата</th></tr>', '')
+        document.getElementById('zamena').innerHTML = '<tr><th>Клиент</th><th>Адрес дома</th><th>Решение для УД</th><th>Действии</th><th>Дата</th></tr>' + ostatok + zamena
+        document.getElementById('tr_'+homeID).style.display = 'none'
+
+        
+        $.ajax({
+            type: 'GET',
+            data: {
+                connectSolutionID:homeID,
+            }
+        })    
+    })
+   
+</script>
+
+{%endblock%}

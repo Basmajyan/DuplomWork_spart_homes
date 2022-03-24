@@ -1,0 +1,27 @@
+{%extends 'main/layout.html'%}
+{%load static%}
+
+{%block title%}<title>Логин</title>{%endblock%}
+
+
+{%block content%}
+<div class="authorizationDiv">
+
+    <form class="UserRegForm" method="POST">
+        {%csrf_token%}
+        <h3>Логин</h3>
+        {{form.username}}<br>
+        {{form.password}}<br>
+        <br>
+        <button class="submitButton regsubmut " type="submit">LogIn</button>
+
+    </form>
+    {%if error%}
+        <p id="errorText">Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут быть чувствительны к регистру.</p>
+    {%else%}
+        <p id="errorText"></p>
+    {%endif%}
+</div>
+<div style="height:250px"></div>
+
+{%endblock%}
